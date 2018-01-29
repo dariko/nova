@@ -158,6 +158,11 @@ def _get_neutron_network(session, cluster, vif):
 def get_network_ref(session, cluster, vif, is_neutron):
     if is_neutron:
         network_ref = _get_neutron_network(session, cluster, vif)
+        try:
+            network_ref['dvs_port_key'] = vif['details']['dvs_port_key']
+        except KeyError:
+            pass
+
     else:
         create_vlan = vif['network'].get_meta('should_create_vlan', False)
         network_ref = ensure_vlan_bridge(session, vif, cluster=cluster,
