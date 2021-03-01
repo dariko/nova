@@ -228,6 +228,12 @@ Possible values:
 
 * Any string that is a valid domain name.
 """),
+    cfg.BoolOpt("extract_hostname_from_fqdn",
+        default=False,
+        help="""
+If True the instance hostname will be set to the short name extracted
+from the instance name.
+""")
 ]
 
 file_opts = [

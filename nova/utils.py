@@ -373,6 +373,8 @@ def sanitize_hostname(hostname, default_name=None):
         hostname = hostname.encode('latin-1', 'ignore').decode('latin-1')
 
     hostname = truncate_hostname(hostname)
+    if CONF.extract_hostname_from_fqdn:
+        hostname = hostname.split('.')[0]
     hostname = re.sub('[ _]', '-', hostname)
     hostname = re.sub(r'[^\w.-]+', '', hostname)
     hostname = hostname.lower()
