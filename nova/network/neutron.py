@@ -744,7 +744,12 @@ class API(base.Base):
                     # dns_name attribute, it is equal to the instance's
                     # hostname
                     if port.get('dns_name'):
-                        if port['dns_name'] != instance.hostname:
+                        dns_name_valid_for_stripped = \
+                            CONF.api.strip_domain_from_hostname and \
+                            port['dns_assignment'][0]['fqdn'] == \
+                                "%s." % instance.hostname
+                        if not (port['dns_name'] == instance.hostname or
+                                dns_name_valid_for_stripped):
                             raise exception.PortNotUsableDNS(
                                 port_id=request.port_id,
                                 instance=instance.uuid, value=port['dns_name'],
@@ -1596,7 +1601,11 @@ class API(base.Base):
         """
         if self._has_dns_extension() and network.get('dns_domain'):
             try:
-                port_req_body = {'port': {'dns_name': instance.hostname}}
+                _hostname = instance.hostname
+                if CONF.api.strip_domain_from_hostname and \
+                    instance.hostname.endswith(network.get('dns_domain')[:-1]):
+                    _hostname = _hostname[:-(len(network.get('dns_domain')))]
+                port_req_body = {'port': {'dns_name': _hostname}}
                 neutron.update_port(port_id, port_req_body)
             except neutron_client_exc.BadRequest:
                 LOG.warning('Neutron error: Instance hostname '

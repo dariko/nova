@@ -228,6 +228,13 @@ Possible values:
 
 * Any string that is a valid domain name.
 """),
+    cfg.BoolOpt("strip_domain_from_hostname",
+        default=False,
+        help="""
+If True and the instance hostname ends with the dns_domain of an instance
+port the dns_name of the port will be set to the hostname stripped of the
+dns_domain.
+"""),
 ]
 
 file_opts = [
